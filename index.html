@@ -5,12 +5,36 @@
 <title>Contagem Regressiva 2026</title>
 
 <style>
+    html, body {
+    width: 100%;
+    height: 100%;
+}
+
     body {
         margin: 0;
-        background: black;
-        color: white;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #258150, #cfe9d9 );
         font-family: Arial, sans-serif;
         overflow: hidden;
+    }
+
+    /* Palavras flutuantes */
+    .word {
+        position: absolute;
+        font-size: 90px;
+        opacity: 1;
+        animation: float linear infinite;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+
+    @keyframes float {
+        from {
+            transform: translateY(110vh);
+        }
+        to {
+            transform: translateY(-120px);
+        }
     }
 
     .container {
@@ -20,6 +44,11 @@
         transform: translate(-50%, -50%);
         text-align: center;
         z-index: 10;
+        color: #134e4a;
+        background: rgba(255,255,255,0.6);
+        padding: 30px 40px;
+        border-radius: 20px;
+        backdrop-filter: blur(6px);
     }
 
     h1 {
@@ -37,6 +66,7 @@
         top: 0;
         left: 0;
         display: none;
+        z-index: 20;
     }
 </style>
 </head>
@@ -51,8 +81,45 @@
 <canvas id="fireworks"></canvas>
 
 <script>
-const targetDate = new Date("January 1, 2026 00:00:00").getTime();
+/* =====================
+   Palavras positivas
+===================== */
+const words = [
+    "Alegria","Amor","Paz","Esperança","Gratidão","Felicidade",
+    "Harmonia","Confiança","Respeito","Bondade","Sorriso","Coragem",
+    "Sucesso","Serenidade","Amizade","Empatia","Luz","Otimismo",
+    "Prosperidade","Gentileza","Equilíbrio","Motivação","Criatividade",
+    "Superação","Vitória","Cuidado","União","Inspiração","Bem-estar",
+    "Positividade"
+];
 
+const colors = [
+    "#2f855a", "#38a169", "#68d391", "#81e6d9",
+    "#63b3ed", "#7f9cf5", "#b794f4", "#f6ad55"
+];
+
+function createFloatingWords() {
+    words.forEach(word => {
+        const el = document.createElement("div");
+        el.className = "word";
+        el.innerText = word;
+
+        el.style.left = Math.random() * 90 + "vw";
+        el.style.animationDuration = (15 + Math.random() * 20) + "s";
+        el.style.fontSize = (16 + Math.random() * 14) + "px";
+        el.style.color = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDelay = Math.random() * 20 + "s";
+
+        document.body.appendChild(el);
+    });
+}
+
+createFloatingWords();
+
+/* =====================
+   Contagem regressiva
+===================== */
+const targetDate = new Date("January 1, 2026 00:00:00").getTime();
 const countdown = document.getElementById("countdown");
 const title = document.getElementById("title");
 const canvas = document.getElementById("fireworks");
@@ -66,7 +133,7 @@ function updateCountdown() {
     const distance = targetDate - now;
 
     if (distance <= 0) {
-        title.innerHTML = "Feliz 2026 !!!";
+        title.innerHTML = "🌟 Feliz 2026 🌟";
         countdown.innerHTML = "";
         startFireworks();
         return;
@@ -78,19 +145,19 @@ function updateCountdown() {
     const seconds = Math.floor((distance / 1000) % 60);
 
     countdown.innerHTML =
-        `${days} dias - ${hours} horas - ${minutes} minutos - ${seconds} segundos`;
+        `${days} dias · ${hours} horas · ${minutes} minutos · ${seconds} segundos`;
 
     requestAnimationFrame(updateCountdown);
 }
 
-// =====================
-// Fogos de artifício
-// =====================
+/* =====================
+   Fogos de artifício
+===================== */
 let particles = [];
 
 function startFireworks() {
     canvas.style.display = "block";
-    setInterval(createFirework, 400);
+    setInterval(createFirework, 500);
     animate();
 }
 
@@ -98,19 +165,20 @@ function createFirework() {
     const x = Math.random() * canvas.width;
     const y = Math.random() * canvas.height / 2;
 
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 70; i++) {
         particles.push({
             x,
             y,
             vx: (Math.random() - 0.5) * 6,
             vy: (Math.random() - 0.5) * 6,
-            life: 100
+            life: 120,
+            color: colors[Math.floor(Math.random() * colors.length)]
         });
     }
 }
 
 function animate() {
-    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     particles.forEach((p, i) => {
@@ -121,7 +189,7 @@ function animate() {
         if (p.life <= 0) {
             particles.splice(i, 1);
         } else {
-            ctx.fillStyle = "orange";
+            ctx.fillStyle = p.color;
             ctx.fillRect(p.x, p.y, 3, 3);
         }
     });
