@@ -6,14 +6,14 @@
 
 <style>
     html, body {
-    width: 100%;
-    height: 100%;
-}
+        width: 100%;
+        height: 100%;
+    }
 
     body {
         margin: 0;
         min-height: 100vh;
-        background: linear-gradient(180deg, #258150, #cfe9d9 );
+        background: linear-gradient(180deg, #258150, #75b18c );
         font-family: Arial, sans-serif;
         overflow: hidden;
     }
@@ -21,39 +21,35 @@
     /* Palavras flutuantes */
     .word {
         position: absolute;
-        font-size: 90px;
-        opacity: 1;
+        font-size: 100px;
         animation: float linear infinite;
         pointer-events: none;
         white-space: nowrap;
     }
 
     @keyframes float {
-        from {
-            transform: translateY(110vh);
-        }
-        to {
-            transform: translateY(-120px);
-        }
+        from { transform: translateY(110vh); }
+        to { transform: translateY(-120px); }
     }
 
     .container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        z-index: 10;
-        color: #134e4a;
-        background: rgba(255,255,255,0.6);
-        padding: 30px 40px;
-        border-radius: 20px;
-        backdrop-filter: blur(6px);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 30; /* maior que o canvas */
+    color: #084946;
+    
+    padding: 30px 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
     }
 
     h1 {
         font-size: 50px;
         margin-bottom: 20px;
+        transition: all 0.5s ease;
     }
 
     #countdown {
@@ -119,7 +115,7 @@ createFloatingWords();
 /* =====================
    Contagem regressiva
 ===================== */
-const targetDate = new Date("January 1, 2016 00:00:00").getTime();
+const targetDate = new Date("January 1, 2026 00:00:00").getTime(); // Corrigido para 2026
 const countdown = document.getElementById("countdown");
 const title = document.getElementById("title");
 const canvas = document.getElementById("fireworks");
@@ -128,13 +124,23 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let finished = false;
+
 function updateCountdown() {
     const now = new Date().getTime();
     const distance = targetDate - now;
 
-    if (distance <= 0) {
-        title.innerHTML = "🌟 Feliz 2026 🌟";
-        countdown.innerHTML = "";
+    if (distance <= 0 && !finished) {
+        finished = true;
+
+        // Atualiza o título
+        title.innerHTML = "Feliz 2026";
+
+        // Esconde apenas a contagem
+        countdown.style.display = "none";
+
+        // Mostra os fogos
+        canvas.style.display = "block";
         startFireworks();
         return;
     }
@@ -149,6 +155,7 @@ function updateCountdown() {
 
     requestAnimationFrame(updateCountdown);
 }
+
 
 /* =====================
    Fogos de artifício
