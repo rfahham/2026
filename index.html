@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Contagem Regressiva 2026</title>
+
+<style>
+    body {
+        margin: 0;
+        background: black;
+        color: white;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+    }
+
+    .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 10;
+    }
+
+    h1 {
+        font-size: 50px;
+        margin-bottom: 20px;
+    }
+
+    #countdown {
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1 id="title">Contagem Regressiva...</h1>
+    <div id="countdown"></div>
+</div>
+
+<canvas id="fireworks"></canvas>
+
+<script>
+const targetDate = new Date("January 1, 2026 00:00:00").getTime();
+
+const countdown = document.getElementById("countdown");
+const title = document.getElementById("title");
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance <= 0) {
+        title.innerHTML = "Feliz 2026 !!!";
+        countdown.innerHTML = "";
+        startFireworks();
+        return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((distance / (1000 * 60)) % 60);
+    const seconds = Math.floor((distance / 1000) % 60);
+
+    countdown.innerHTML =
+        `${days} dias - ${hours} horas - ${minutes} minutos - ${seconds} segundos`;
+
+    requestAnimationFrame(updateCountdown);
+}
+
+// =====================
+// Fogos de artifício
+// =====================
+let particles = [];
+
+function startFireworks() {
+    canvas.style.display = "block";
+    setInterval(createFirework, 400);
+    animate();
+}
+
+function createFirework() {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height / 2;
+
+    for (let i = 0; i < 60; i++) {
+        particles.push({
+            x,
+            y,
+            vx: (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6,
+            life: 100
+        });
+    }
+}
+
+function animate() {
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+
+        if (p.life <= 0) {
+            particles.splice(i, 1);
+        } else {
+            ctx.fillStyle = "orange";
+            ctx.fillRect(p.x, p.y, 3, 3);
+        }
+    });
+
+    requestAnimationFrame(animate);
+}
+
+updateCountdown();
+</script>
+
+</body>
+</html>
